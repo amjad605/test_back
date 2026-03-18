@@ -21,14 +21,20 @@ export function generateWorkContractArHtml(
   const logoBase64 = fs.readFileSync(logoPath).toString("base64");
   const logoDataUri = `data:image/png;base64,${logoBase64}`;
 
-  // Embed Amiri fonts as base64 to ensure Arabic text renders on any server
-  const amiriRegularPath = path.join(__dirname, "../../fonts/Amiri-Regular.ttf");
-  const amiriBoldPath = path.join(__dirname, "../../fonts/Amiri-Bold.ttf");
-  const amiriRegularBase64 = fs.readFileSync(amiriRegularPath).toString("base64");
-  const amiriBoldBase64 = fs.readFileSync(amiriBoldPath).toString("base64");
+  // Embed Cairo font as base64 to ensure Arabic text renders on any server
+  const cairoFontPath = path.join(__dirname, "../../fonts/Cairo-Regular.ttf");
+  const cairoFontBase64 = fs.readFileSync(cairoFontPath).toString("base64");
 
   const headerTemplate = `
-<div style="width:100%; font-size:10px; direction:rtl; padding:10px 40px;">
+<style>
+  @font-face {
+    font-family: 'Cairo';
+    src: url(data:font/truetype;base64,${cairoFontBase64}) format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+  }
+</style>
+<div style="width:100%; font-size:10px; direction:rtl; padding:10px 40px; font-family: 'Cairo', 'Arial', sans-serif;">
   <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
     <div style="width:80px; height:80px; background:#333; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center;">
       <img src="${logoDataUri}" alt="Company Logo" style="width:100%; height:100%; object-fit:cover;" />
@@ -47,7 +53,7 @@ export function generateWorkContractArHtml(
 `;
 
   const footerTemplate = `
-<div style="width:100%; font-size:9px; direction:rtl; padding:0 40px;">
+<div style="width:100%; font-size:9px; direction:rtl; padding:0 40px; font-family: 'Cairo', 'Arial', sans-serif;">
   <div style="border-top:1px solid #000; padding-top:6px; display:flex; justify-content:space-between; align-items: center;">
     <div style="flex: 1; text-align: right; color: #555;">
       ملاحظة / هذا النموذج يعد نموذجاً إرشادياً لشروط و أحكام عقد العمل في القطاع الأهلي ، ويحق لكل شركة إعداد نموذج مماثلاً له على المطبوعات الخاصة بها شرط ان يتضمن كافة الأحكام والشروط الواردة بهذا النموذج .
@@ -66,20 +72,14 @@ export function generateWorkContractArHtml(
   <meta charset="UTF-8" />
   <style>
     @font-face {
-      font-family: 'Amiri';
-      src: url(data:font/truetype;base64,${amiriRegularBase64}) format('truetype');
-      font-weight: normal;
-      font-style: normal;
-    }
-    @font-face {
-      font-family: 'Amiri';
-      src: url(data:font/truetype;base64,${amiriBoldBase64}) format('truetype');
-      font-weight: bold;
+      font-family: 'Cairo';
+      src: url(data:font/truetype;base64,${cairoFontBase64}) format('truetype');
+      font-weight: 100 900;
       font-style: normal;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Amiri', 'Arial', sans-serif;
+      font-family: 'Cairo', 'Arial', sans-serif;
       background: #fff;
       padding: 0;
       font-size: 12px;

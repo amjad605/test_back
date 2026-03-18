@@ -1,7 +1,7 @@
 import { ICompany } from "./company.model";
 import { IEmployee } from "../employee/employee.model";
 import path from "path";
-const fs = require("fs");
+import fs from "fs";
 
 // Read the image and convert to base64
 
@@ -38,8 +38,21 @@ export function generateCompanyPdfHtml(
   const logoPath = path.join(__dirname, "../images/logo.png");
   const logoBase64 = fs.readFileSync(logoPath).toString("base64");
   const logoDataUri = `data:image/png;base64,${logoBase64}`;
+
+  // Embed Cairo font as base64 to ensure Arabic text renders on any server
+  const cairoFontPath = path.join(__dirname, "../fonts/Cairo-Regular.ttf");
+  const cairoFontBase64 = fs.readFileSync(cairoFontPath).toString("base64");
+
   const headerTemplate = `
-<div style="width:100%; font-size:10px; direction:rtl; padding:10px 40px;">
+<style>
+  @font-face {
+    font-family: 'Cairo';
+    src: url(data:font/truetype;base64,${cairoFontBase64}) format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+  }
+</style>
+<div style="width:100%; font-size:10px; direction:rtl; padding:10px 40px; font-family: 'Cairo', 'Arial', sans-serif;">
   
   <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
     
@@ -70,7 +83,7 @@ export function generateCompanyPdfHtml(
 `;
 
   const footerTemplate = `
-<div style="width:100%; font-size:9px; direction:rtl; padding:0 20px;">
+<div style="width:100%; font-size:9px; direction:rtl; padding:0 20px; font-family: 'Cairo', 'Arial', sans-serif;">
   
   <div style="border-top:1px solid #000; padding-top:6px;">
     <div>
@@ -101,8 +114,14 @@ export function generateCompanyPdfHtml(
      
       
       * { margin: 0; padding: 0; box-sizing: border-box; }
+      @font-face {
+        font-family: 'Cairo';
+        src: url(data:font/truetype;base64,${cairoFontBase64}) format('truetype');
+        font-weight: 100 900;
+        font-style: normal;
+      }
       body {
-        font-family: 'Noto Kufi Arabic', sans-serif;
+        font-family: 'Cairo', 'Arial', sans-serif;
         background: #fff;
         padding: 40px 20px;
         font-size: 11px;
@@ -172,7 +191,7 @@ thead {
       }
 .license-container {
     direction: rtl;
-    font-family: Arial, sans-serif;
+    font-family: 'Cairo', 'Arial', sans-serif;
     padding: 20px;
     color: #000;
   }

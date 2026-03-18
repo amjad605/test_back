@@ -1,8 +1,7 @@
 import path from "path";
+import fs from "fs";
 import { ICompany } from "../../companies/company.model";
 import { IEmployee } from "../employee.model";
-
-const fs = require("fs");
 
 export function generateSalaryCertificateEnHtml(
   employee: IEmployee,
@@ -18,13 +17,25 @@ export function generateSalaryCertificateEnHtml(
   const logoBase64 = fs.readFileSync(logoPath).toString("base64");
   const logoDataUri = `data:image/png;base64,${logoBase64}`;
 
+  // Embed Cairo font as base64 to ensure text renders consistently on any server
+  const cairoFontPath = path.join(__dirname, "../../fonts/Cairo-Regular.ttf");
+  const cairoFontBase64 = fs.readFileSync(cairoFontPath).toString("base64");
+
   const headerTemplate = `
-<div style="width:100%; font-size:10px; padding:10px 40px;">
+<style>
+  @font-face {
+    font-family: 'Cairo';
+    src: url(data:font/truetype;base64,${cairoFontBase64}) format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+  }
+</style>
+<div style="width:100%; font-size:10px; padding:10px 40px; font-family: 'Cairo', 'Arial', sans-serif;">
   <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
     <div style="width:80px; height:80px; background:#333; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center;">
       <img src="${logoDataUri}" alt="Company Logo" style="width:100%; height:100%; object-fit:cover;" />
     </div>
-    <div style="text-align:right; flex:1; font-size: 10px; margin-right: 20px;">
+    <div style="text-align:right; flex:1; font-size: 10px; margin-right: 20px; font-family: 'Cairo', 'Arial', sans-serif;">
        Kuwait, ${printDate}
     </div>
   </div>
@@ -32,7 +43,7 @@ export function generateSalaryCertificateEnHtml(
 `;
 
   const footerTemplate = `
-<div style="width:100%; height: 40px; background: #333; margin-top: 20px;"></div>
+<div style="width:100%; height: 40px; background: #333; margin-top: 20px; font-family: 'Cairo', 'Arial', sans-serif;"></div>
 `;
 
   const html = `
@@ -41,8 +52,14 @@ export function generateSalaryCertificateEnHtml(
 <head>
   <meta charset="UTF-8" />
   <style>
+    @font-face {
+      font-family: 'Cairo';
+      src: url(data:font/truetype;base64,${cairoFontBase64}) format('truetype');
+      font-weight: 100 900;
+      font-style: normal;
+    }
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: 'Cairo', 'Arial', sans-serif;
       padding: 60px;
       line-height: 1.8;
       color: #333;
