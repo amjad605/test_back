@@ -1,8 +1,7 @@
 import path from "path";
+import fs from "fs";
 import { ICompany } from "../../companies/company.model";
 import { IEmployee } from "../employee.model";
-
-const fs = require("fs");
 
 export function generateWorkContractArHtml(
   employee: IEmployee,
@@ -21,6 +20,12 @@ export function generateWorkContractArHtml(
   const logoPath = path.join(__dirname, "../../images/logo.png");
   const logoBase64 = fs.readFileSync(logoPath).toString("base64");
   const logoDataUri = `data:image/png;base64,${logoBase64}`;
+
+  // Embed Amiri fonts as base64 to ensure Arabic text renders on any server
+  const amiriRegularPath = path.join(__dirname, "../../fonts/Amiri-Regular.ttf");
+  const amiriBoldPath = path.join(__dirname, "../../fonts/Amiri-Bold.ttf");
+  const amiriRegularBase64 = fs.readFileSync(amiriRegularPath).toString("base64");
+  const amiriBoldBase64 = fs.readFileSync(amiriBoldPath).toString("base64");
 
   const headerTemplate = `
 <div style="width:100%; font-size:10px; direction:rtl; padding:10px 40px;">
@@ -62,11 +67,19 @@ export function generateWorkContractArHtml(
   <style>
     @font-face {
       font-family: 'Amiri';
-      src: local('Amiri'), local('Amiri-Regular');
+      src: url(data:font/truetype;base64,${amiriRegularBase64}) format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'Amiri';
+      src: url(data:font/truetype;base64,${amiriBoldBase64}) format('truetype');
+      font-weight: bold;
+      font-style: normal;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Arial', 'Amiri', sans-serif;
+      font-family: 'Amiri', 'Arial', sans-serif;
       background: #fff;
       padding: 0;
       font-size: 12px;
